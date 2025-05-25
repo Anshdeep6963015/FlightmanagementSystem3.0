@@ -52,7 +52,8 @@ Flight Management System 3.0 is a console-based Java application simulating a co
 
 Here is a screenshot of the confirmation email received after booking:
 
-![Confirmation Email](Screenshot_2025-05-25_135011.png)
+![Confirmation Email](images/Screenshot%202025-05-25%20135011.png)
+
 
 
 ✅ Booking ID, Flight ID  
