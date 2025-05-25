@@ -1,10 +1,13 @@
 package email;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.io.IOException;
 import java.util.Properties;
 
 public class EmailService {
@@ -15,7 +18,8 @@ public class EmailService {
             String bookingId,
             String flightId,
             String seatClass,
-            String foodOption) throws MessagingException, IOException {
+            String foodOption,
+            String qrCodeFilePath) throws MessagingException, IOException {
 
         Properties props = EmailConfig.getEmailProperties();
 
@@ -35,9 +39,7 @@ public class EmailService {
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject("Your Flight Booking Confirmation");
 
-        // Load and customize HTML template
         String templatePath = "email/booking_confirmation.html";
-
         String htmlBody = new String(Files.readAllBytes(Paths.get(templatePath)));
         htmlBody = htmlBody.replace("{{name}}", userName)
                 .replace("{{bookingId}}", bookingId)
@@ -45,7 +47,23 @@ public class EmailService {
                 .replace("{{seatClass}}", seatClass)
                 .replace("{{foodOption}}", foodOption);
 
-        message.setContent(htmlBody, "text/html");
+        // Create the HTML part
+        MimeBodyPart htmlPart = new MimeBodyPart();
+        htmlPart.setContent(htmlBody, "text/html");
+
+        // Create the image part
+        MimeBodyPart imagePart = new MimeBodyPart();
+        DataSource fds = new FileDataSource(qrCodeFilePath);
+        imagePart.setDataHandler(new DataHandler(fds));
+        imagePart.setHeader("Content-ID", "<qrCodeImage>");
+        imagePart.setDisposition(MimeBodyPart.INLINE);
+
+        // Combine parts into a multipart/related container
+        Multipart multipart = new MimeMultipart("related");
+        multipart.addBodyPart(htmlPart);
+        multipart.addBodyPart(imagePart);
+
+        message.setContent(multipart);
 
         Transport.send(message);
     }

@@ -1834,6 +1834,7 @@ public class FlightManagementSystem {
 import java.io.*;
 import java.util.*;
 import email.EmailService;
+import qr.QRGenerator;
 
 class Flight {
     String flightId, source, destination, departureTime;
@@ -2054,55 +2055,109 @@ public class FlightManagementSystem {
     }
 
     static void bookTicket() {
-        System.out.print("Passenger Name: ");
-        String name = sc.nextLine();
-
-        System.out.print("Passenger Email: ");
-        String email = sc.nextLine();
-
-        System.out.print("Flight ID: ");
-        String flightId = sc.nextLine();
-
-        Flight flight = getFlightById(flightId);
-
-        if (flight == null || flight.flightStatus.equalsIgnoreCase("Cancelled")) {
-            writeOutput("Invalid or cancelled flight.");
-            return;
-        }
-
-        if (flight.totalSeats <= 0) {
-            writeOutput("No seats available.");
-            return;
-        }
-
-        System.out.print("Seat Class (Economy/Business/First): ");
-        String seatClass = sc.nextLine();
-
-        System.out.print("Food Option (Veg/Non-Veg): ");
-        String food = sc.nextLine();
-
-        simulatePayment();
-
-        String bookingId = "B" + (bookings.size() + 1);
-        Booking booking = new Booking(bookingId, flightId, name, seatClass, food);
-        bookings.add(booking);
-        flight.totalSeats--;
-        logBooking(booking);
-        writeOutput("Booking successful: " + bookingId);
-
-        // Send confirmation email
         try {
-            EmailService.sendBookingConfirmation(
-                    email,
-                    name,
-                    bookingId,
-                    flight.flightId + " (" + flight.source + "-" + flight.destination + ", " + flight.departureTime
-                            + ")",
-                    seatClass,
-                    food);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Failed to send booking confirmation email.");
+            System.out.print("Passenger Name: ");
+            String name = sc.nextLine().trim();
+            if (name.isEmpty()) {
+                writeOutput("Passenger name cannot be empty.");
+                return;
+            }
+
+            System.out.print("Passenger Email: ");
+            String email = sc.nextLine().trim();
+            if (email.isEmpty()) {
+                writeOutput("Passenger email cannot be empty.");
+                return;
+            }
+
+            System.out.print("Flight ID: ");
+            String flightId = sc.nextLine().trim();
+            if (flightId.isEmpty()) {
+                writeOutput("Flight ID cannot be empty.");
+                return;
+            }
+
+            Flight flight = getFlightById(flightId);
+
+            if (flight == null || flight.flightStatus == null || flight.flightStatus.equalsIgnoreCase("Cancelled")) {
+                writeOutput("Invalid or cancelled flight.");
+                return;
+            }
+
+            if (flight.totalSeats <= 0) {
+                writeOutput("No seats available.");
+                return;
+            }
+
+            System.out.print("Seat Class (Economy/Business/First): ");
+            String seatClass = sc.nextLine().trim();
+            if (!(seatClass.equalsIgnoreCase("Economy") || seatClass.equalsIgnoreCase("Business")
+                    || seatClass.equalsIgnoreCase("First"))) {
+                writeOutput("Invalid seat class.");
+                return;
+            }
+
+            System.out.print("Food Option (Veg/Non-Veg): ");
+            String food = sc.nextLine().trim();
+            if (!(food.equalsIgnoreCase("Veg") || food.equalsIgnoreCase("Non-Veg"))) {
+                writeOutput("Invalid food option.");
+                return;
+            }
+
+            simulatePayment();
+
+            String bookingId = "B" + (bookings.size() + 1);
+            Booking booking = new Booking(bookingId, flightId, name, seatClass, food);
+            bookings.add(booking);
+
+            flight.totalSeats--; // Reduce available seats
+            logBooking(booking);
+            writeOutput("Booking successful: " + bookingId);
+
+            // Ensure qr_codes directory exists
+            File qrDir = new File("qr_codes");
+            if (!qrDir.exists()) {
+                if (!qrDir.mkdirs()) {
+                    writeOutput("❌ Failed to create directory for QR codes.");
+                    return;
+                }
+            }
+
+            // Generate QR code text
+            String qrText = "Booking ID: " + bookingId + "\n" +
+                    "Name: " + name + "\n" +
+                    "Flight: " + flight.flightId + " (" + flight.source + " to " + flight.destination + ")\n" +
+                    "Departure: " + flight.departureTime + "\n" +
+                    "Seat Class: " + seatClass + "\n" +
+                    "Food: " + food;
+
+            String qrPath = "qr_codes/" + bookingId + ".png";
+
+            try {
+                QRGenerator.generateQRCodeImage(qrText, 300, 300, qrPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                writeOutput("❌ Failed to generate QR code.");
+            }
+
+            try {
+                EmailService.sendBookingConfirmation(
+                        email,
+                        name,
+                        bookingId,
+                        flight.flightId + " (" + flight.source + "-" + flight.destination + ", " + flight.departureTime
+                                + ")",
+                        seatClass,
+                        food,
+                        qrPath);
+            } catch (Exception e) {
+                e.printStackTrace();
+                writeOutput("❌ Failed to send booking confirmation email.");
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            writeOutput("An unexpected error occurred during booking.");
         }
     }
 

@@ -86,3 +86,21 @@ B1,FL102,ANsh,First,VEG
 B1,FL102,ANsh,First,VEG
 Bookings exported to bookings.csv
 System exited by user.
+Booking successful: B1
+System exited by user.
+Booking successful: B1
+System exited by user.
+Booking successful: B1
+System exited by user.
+Booking successful: B1
+System exited by user.
+Booking successful: B1
+Booking successful: B2
+Booking successful: B3
+--- Bookings for s ---
+--- All Bookings ---
+B1,FL102,ansh,First,Veg
+B2,FL110,ANshdeep,FIRST,VEG
+B3,FL110,ANshdeep,FIRST,VEG
+Bookings exported to bookings.csv
+System exited by user.
