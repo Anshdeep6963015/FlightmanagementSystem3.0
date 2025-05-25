@@ -131,7 +131,7 @@ FlightManagementSystem3.0/
 
 
 
-## 👨‍✈️ About the Developer
+## About the Developer
 
 **Anshdeep** — CSE Student at Chitkara University
 
