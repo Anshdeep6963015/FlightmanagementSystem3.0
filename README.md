@@ -52,6 +52,12 @@
 ---
 
 ## 🧾 Booking Confirmation Sample
+## Email Confirmation Screenshot
+
+Here is a screenshot of the confirmation email received after booking:
+
+![Confirmation Email](images/Screenshot_2025-05-25_135011.png)
+
 
 - ✅ Booking ID, Flight ID  
 - 🛫 Flight details (e.g., FL102 (IND–DEL, 6:00PM))  
