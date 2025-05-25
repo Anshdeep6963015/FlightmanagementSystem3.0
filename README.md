@@ -131,7 +131,10 @@ FlightManagementSystem3.0/
 
 
 
-##👨‍✈️ About the Developer Anshdeep CSE Student at Chitkara University
+## 👨‍✈️ About the Developer
 
-📧 Email: anshdeeep24072004@gmail.com 
-🎓 University Email: anshdeep1779.be23@chitkara.edu.in
+**Anshdeep** — CSE Student at Chitkara University
+
+📧 Personal Email: [anshdeeep24072004@gmail.com](mailto:anshdeeep24072004@gmail.com)  
+🎓 University Email: [anshdeep1779.be23@chitkara.edu.in](mailto:anshdeep1779.be23@chitkara.edu.in)
+
