@@ -127,7 +127,9 @@ FlightManagementSystem3.0/
 
 
 
-
+### ✅ Newly Added in 4.0  
+- 📊 **Admin Analytics Dashboard** (View revenue, bookings, food & seat class stats) 
+https://github.com/Anshdeep6963015/FlightmanagementSystem4.0
 
 
 
